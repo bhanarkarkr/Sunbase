@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #customer-list-container {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .action-buttons button.edit {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .action-buttons button.delete {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-container" class="container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required><br>
+        <button type="button" onclick="login()">Login</button>
+    </form>
+    <p id="login-error"></p>
+</div>
+
+<!-- Customer List Screen -->
+<div id="customer-list-container" class="container">
+    <h2>Customer List</h2>
+    <table id="customer-table">
+        <!-- Customer data will be added dynamically here -->
+    </table>
+    <button onclick="showAddCustomerScreen()">Add Customer</button>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<!-- Add New Customer Screen -->
+<div id="add-customer-screen" class="container" style="display:none;">
+    <h2>Add New Customer</h2>
+    <form id="add-customer-form">
+        <!-- Form elements for adding a new customer -->
+        <button type="button" onclick="createCustomer()">Save</button>
+        <button type="button" onclick="cancelAddCustomer()">Cancel</button>
+    </form>
+</div>
+
+<script>
+    let isLoggedIn = false;
+    let customers = [];
+
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Perform basic check for demo purposes
+        if (username === 'test@sunbasedata.com' && password === 'Test@123') {
+            isLoggedIn = true;
+            showCustomerListScreen();
+        } else {
+            document.getElementById('login-error').innerText = 'Invalid username or password';
+        }
+    }
+
+    function showCustomerListScreen() {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('customer-list-container').style.display = 'block';
+        loadCustomerList();
+    }
+
+    function loadCustomerList() {
+        // For demo purposes, use mock customer data
+        customers = [
+            { firstName: 'John', lastName: 'Doe', address: '123 Main St', city: 'Cityville', state: 'CA', email: 'john@example.com', phone: '123-456-7890' },
+            { firstName: 'Jane', lastName: 'Smith', address: '456 Oak St', city: 'Townsville', state: 'NY', email: 'jane@example.com', phone: '987-654-3210' }
+            // Add more customers as needed
+        ];
+
+        displayCustomerList();
+    }
+
+    function displayCustomerList() {
+        const table = document.getElementById('customer-table');
+        table.innerHTML = ''; // Clear existing data
+
+        // Create table headers
+        const headers = ['First Name', 'Last Name', 'Address', 'City', 'State', 'Email', 'Phone', 'Action'];
+        const headerRow = table.insertRow();
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+
+        // Populate table with customer data
+        customers.forEach(customer => {
+            const row = table.insertRow();
+            Object.values(customer).forEach(value => {
+                const cell = row.insertCell();
+                cell.textContent = value;
+            });
+
+            // Add Edit and Delete buttons
+            const actionCell = row.insertCell();
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.onclick = function () {
+                // Implement edit functionality
+                console.log('Edit clicked for customer:', customer);
+            };
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.onclick = function () {
+                // Implement delete functionality
+                console.log('Delete clicked for customer:', customer);
+            };
+
+            actionCell.appendChild(editButton);
+            actionCell.appendChild(deleteButton);
+        });
+    }
+
+    function showAddCustomerScreen() {
+        document.getElementById('customer-list-container').style.display = 'none';
+        document.getElementById('add-customer-screen').style.display = 'block';
+    }
+
+    function createCustomer() {
+        // Get form values (for demo purposes, use placeholder values)
+        const newCustomer = {
+            firstName: 'New',
+            lastName: 'Customer',
+            address: '789 Elm St',
+            city: 'Villagetown',
+            state: 'TX',
+            email: 'new@example.com',
+            phone: '555-1234'
+        };
+
+        customers.push(newCustomer);
+
+        // Display the updated customer list
+        displayCustomerList();
+
+        // Reset the form and switch back to the customer list view
+        document.getElementById('customer-list-container').style.display = 'block';
+        document.getElementById('add-customer-screen').style.display = 'none';
+    }
+
+    function cancelAddCustomer() {
+        // Reset the form and switch back to the customer list view
+        document.getElementById('customer-list-container').style.display = 'block';
+        document.getElementById('add-customer-screen').style.display = 'none';
+    }
+
+    function logout() {
+        isLoggedIn = false;
+        document.getElementById('customer-list-container').style.display = 'none';
+        document.getElementById('login-container').style.display = 'block';
+    }
+
+    // Initial check to determine which screen to show
+    if (isLoggedIn) {
+        showCustomerListScreen();
+    }
+</script>
+
+</body>
